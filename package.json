@@ -1,0 +1,25 @@
+{
+  "name": "premium-food-order-management-system",
+  "version": "1.0.0",
+  "description": "Premium Food Order Management System for Dastaan Heritage Kitchen",
+  "scripts": {
+    "server": "npm --prefix server run dev",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix server run build && npm --prefix client run build",
+    "db:seed": "npm --prefix server run prisma:seed",
+    "db:push": "npm --prefix server run prisma:push",
+    "test:backend": "npm --prefix server run test"
+  },
+  "keywords": [
+    "restaurant",
+    "order-management",
+    "react",
+    "typescript",
+    "express",
+    "postgresql",
+    "prisma",
+    "tailwind"
+  ],
+  "author": "Antigravity Engineering",
+  "license": "ISC"
+}

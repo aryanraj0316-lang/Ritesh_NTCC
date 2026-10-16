@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #F8F6F1;
+    --surface: #FFFFFF;
+    --text-primary: #242521;
+    --text-secondary: #77776F;
+    --accent: #285943;
+    --border: #E7E3DA;
+    --destructive: #9E2A2B;
+    --success: #2A7A4C;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F8F6F1;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #D5CFC3;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #B8B0A0;
+  }
+}
+
+@layer components {
+  /* Food diet symbols */
+  .veg-indicator {
+    @apply inline-flex items-center justify-center w-4 h-4 border border-sage-700 bg-white rounded-sm;
+  }
+  .veg-dot {
+    @apply w-2 h-2 rounded-full bg-sage-700;
+  }
+
+  .non-veg-indicator {
+    @apply inline-flex items-center justify-center w-4 h-4 border border-brick-700 bg-white rounded-sm;
+  }
+  .non-veg-dot {
+    @apply w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[7px] border-b-brick-700;
+  }
+
+  /* Refined subtle inputs */
+  .form-input {
+    @apply w-full px-3.5 py-2 text-sm bg-white border border-cream-300 rounded-md text-charcoal-800 placeholder-charcoal-400 focus:outline-none focus:ring-1 focus:ring-forest-700 focus:border-forest-700 transition-colors;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium tracking-tight text-white bg-forest-700 hover:bg-forest-800 active:bg-forest-900 rounded-md transition-colors disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium tracking-tight text-charcoal-800 bg-white hover:bg-cream-200 active:bg-cream-300 border border-cream-300 rounded-md transition-colors disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium tracking-tight text-charcoal-600 hover:text-charcoal-900 hover:bg-cream-200 rounded-md transition-colors;
+  }
+
+  /* Destructive button */
+  .btn-destructive {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium tracking-tight text-white bg-brick-700 hover:bg-brick-900 rounded-md transition-colors disabled:opacity-50 disabled:pointer-events-none;
+  }
+}
