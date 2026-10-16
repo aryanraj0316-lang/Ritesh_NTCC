@@ -11,6 +11,7 @@ import reportRoutes from './routes/reports';
 import { authenticateUser } from './middleware/auth';
 
 import path from 'path';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -20,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000'],
+    origin: true,
     credentials: true,
   })
 );
@@ -46,6 +47,18 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/reports', reportRoutes);
+
+// Serve static frontend build in unified deployment
+const clientDist = path.join(__dirname, '../../client/dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get('*', (req: Request, res: Response, next: NextFunction) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/images')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 // 404 handler
 app.use((req: Request, res: Response) => {
