@@ -31,8 +31,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     try {
       const res = await api.auth.me();
-      if (res.success && res.data) {
-        setUser(res.data);
+      const userData = res?.data || res?.user;
+      if (res?.success && userData) {
+        setUser(userData);
       } else {
         localStorage.removeItem('dastaan_auth_token');
         setToken(null);
@@ -53,7 +54,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (credentials: { email: string; password: string }) => {
     const res = await api.auth.login(credentials);
-    const { token: newToken, user: newUser } = res.data;
+    if (!res || res.success === false) {
+      throw new Error(res?.error || res?.message || 'Invalid email or password.');
+    }
+
+    const payload = res.data || res;
+    const newToken = payload?.token;
+    const newUser = payload?.user;
+
+    if (!newToken || !newUser) {
+      throw new Error(res?.error || 'Authentication token or user profile missing in response.');
+    }
+
     localStorage.setItem('dastaan_auth_token', newToken);
     setToken(newToken);
     setUser(newUser);
@@ -62,7 +74,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (data: { email: string; password: string; name: string; phone?: string }) => {
     const res = await api.auth.register(data);
-    const { token: newToken, user: newUser } = res.data;
+    if (!res || res.success === false) {
+      throw new Error(res?.error || res?.message || 'Registration failed. Please check your information.');
+    }
+
+    const payload = res.data || res;
+    const newToken = payload?.token;
+    const newUser = payload?.user;
+
+    if (!newToken || !newUser) {
+      throw new Error(res?.error || 'Registration response was invalid.');
+    }
+
     localStorage.setItem('dastaan_auth_token', newToken);
     setToken(newToken);
     setUser(newUser);

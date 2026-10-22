@@ -80,27 +80,35 @@ async function getMockFallback(endpoint: string, options: RequestInit = {}): Pro
   if (url === '/auth/login' || url === '/auth/register') {
     const body = JSON.parse(options.body as string || '{}');
     const isAdmin = body.email?.includes('admin');
+    const user = {
+      id: isAdmin ? 'usr-admin' : 'usr-demo',
+      email: body.email || 'patron@dastaan.com',
+      name: isAdmin ? 'Farhan Qureshi' : (body.name || 'Gourmet Patron'),
+      role: isAdmin ? 'ADMIN' : 'CUSTOMER',
+    };
+    const token = 'demo_jwt_token';
     return {
       success: true,
-      token: 'demo_jwt_token',
-      user: {
-        id: isAdmin ? 'usr-admin' : 'usr-demo',
-        email: body.email || 'patron@dastaan.com',
-        name: isAdmin ? 'Farhan Qureshi' : (body.name || 'Gourmet Patron'),
-        role: isAdmin ? 'ADMIN' : 'CUSTOMER',
+      token,
+      user,
+      data: {
+        token,
+        user,
       },
     };
   }
 
   if (url === '/auth/me') {
+    const user = {
+      id: 'usr-admin',
+      email: 'admin@dastaan.com',
+      name: 'Farhan Qureshi',
+      role: 'ADMIN',
+    };
     return {
       success: true,
-      user: {
-        id: 'usr-admin',
-        email: 'admin@dastaan.com',
-        name: 'Farhan Qureshi',
-        role: 'ADMIN',
-      },
+      user,
+      data: user,
     };
   }
 
@@ -162,12 +170,18 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
+      if (data && (data.error || data.message)) {
+        throw new Error(data.error || data.message);
+      }
       // If server returned error or 404/500, fallback to mock demo data
       return await getMockFallback(endpoint, options);
     }
 
     return data;
-  } catch (_err) {
+  } catch (_err: any) {
+    if (_err?.message && !_err.message.includes('fetch') && !_err.message.includes('NetworkError') && !_err.message.includes('Failed to fetch')) {
+      throw _err;
+    }
     // If backend network fails, seamlessly fallback to in-memory demo data
     console.warn(`[Dastaan Client] Network request to ${endpoint} failed. Using offline demonstration fallback.`);
     return await getMockFallback(endpoint, options);
